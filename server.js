@@ -12,6 +12,24 @@ const streamKey = 'galaksija12345';
 
 io.on('connection', (socket) => {
     console.log('Novi korisnik povezan');
+    const NodeMediaServer = require('node-media-server');
+
+const nms = new NodeMediaServer({
+    rtmp: {
+        port: 1935,
+        chunk_size: 60000,
+        gop: 60,
+        ping: 30,
+        pingTimeout: 60
+    },
+    http: {
+        port: 8000,
+        allow_origin: '*'
+    }
+});
+
+nms.run();
+
 
     // Prima audio podatke od DJ-a
     socket.on('audioData', (data) => {
