@@ -7,6 +7,8 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 app.use(express.static('public')); // Služi HTML fajl iz "public" foldera
+const streamKey = 'galaksija12345';
+
 
 io.on('connection', (socket) => {
     console.log('Novi korisnik povezan');
