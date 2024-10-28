@@ -44,6 +44,11 @@
             cursor: pointer;
             margin-left: 10px;
         }
+
+        #status {
+            margin-top: 10px;
+            color: yellow;
+        }
     </style>
 </head>
 <body>
@@ -55,6 +60,10 @@
         <input type="file" id="fileInput" multiple>
         <ul id="songList"></ul>
         <audio id="audioPlayer" controls style="display: none;"></audio>
+        <button id="pauseButton" style="display: none;">Pauza</button>
+        <button id="stopButton" style="display: none;">Stop</button>
+        <button id="prevButton" style="display: none;">Prethodna</button>
+        <div id="status">Status: Spreman</div>
     </div>
 
     <script>
@@ -64,6 +73,11 @@
         const songUrlInput = document.getElementById('songUrl');
         const songNameInput = document.getElementById('songName');
         const fileInput = document.getElementById('fileInput');
+        const pauseButton = document.getElementById('pauseButton');
+        const stopButton = document.getElementById('stopButton');
+        const prevButton = document.getElementById('prevButton');
+        const statusDiv = document.getElementById('status');
+
         let songs = [];
         let currentSongIndex = 0;
 
@@ -100,6 +114,12 @@
                 if (index > -1) {
                     songs.splice(index, 1); // Ukloni pesmu iz niza
                     songList.removeChild(li); // Ukloni pesmu iz liste
+                    if (currentSongIndex === index) {
+                        audioPlayer.pause();
+                        audioPlayer.src = '';
+                        currentSongIndex = 0; // Resetuj indeks
+                        statusDiv.textContent = 'Status: Spreman';
+                    }
                 }
             };
 
@@ -121,6 +141,10 @@
                 audioPlayer.play();
                 audioPlayer.style.display = 'block'; // Prikazivanje plejer-a
                 currentSongIndex = index;
+                statusDiv.textContent = 'Status: Igra';
+                pauseButton.style.display = 'inline-block';
+                stopButton.style.display = 'inline-block';
+                prevButton.style.display = 'inline-block';
             }
         }
 
@@ -135,10 +159,43 @@
             } else {
                 currentSongIndex = 0; // Resetuj indeks
                 audioPlayer.style.display = 'none'; // Sakrij plejer
+                statusDiv.textContent = 'Status: Spreman';
+                pauseButton.style.display = 'none';
+                stopButton.style.display = 'none';
+                prevButton.style.display = 'none';
             }
 
             // Ukloni pesmu iz niza
             songs.splice(currentSongIndex - 1, 1);
+        });
+
+        pauseButton.addEventListener('click', () => {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                statusDiv.textContent = 'Status: Igra';
+                pauseButton.textContent = 'Pauza';
+            } else {
+                audioPlayer.pause();
+                statusDiv.textContent = 'Status: Pauza';
+                pauseButton.textContent = 'Nastavi';
+            }
+        });
+
+        stopButton.addEventListener('click', () => {
+            audioPlayer.pause();
+            audioPlayer.src = '';
+            statusDiv.textContent = 'Status: Spreman';
+            currentSongIndex = 0; // Resetuj indeks
+            pauseButton.style.display = 'none';
+            stopButton.style.display = 'none';
+            prevButton.style.display = 'none';
+            audioPlayer.style.display = 'none'; // Sakrij plejer
+        });
+
+        prevButton.addEventListener('click', () => {
+            if (currentSongIndex > 0) {
+                playSong(currentSongIndex - 1);
+            }
         });
 
         // Funkcionalnost za pomeranje (drag and drop)
